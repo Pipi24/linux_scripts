@@ -1,0 +1,53 @@
+#!/usr/bin/expect
+set timeout 30
+set passwd "bryant.24"
+set filePath  "/home/wuhiu/Data/"
+set fileType ".pcap"
+set count 0
+
+if {$argc < 3} {
+	puts "Input 3 parameters."
+	exit
+}
+set protocol [lindex $argv 0]
+set fileCount [lindex $argv 1]
+set packetCount [lindex $argv 2]
+
+puts $protocol
+
+switch "$protocol" {
+	"arp" {
+		while {$count < $fileCount} {
+			incr count
+			set file ${filePath}${protocol}${count}${fileType}
+			spawn sudo tcpdump arp -c $packetCount -w $file
+			expect "password"
+			send "${passwd}\r"
+			expect eof
+		}
+	}
+	"mdns" {
+		while {$count < $fileCount} {
+			incr count
+			set file ${filePath}${protocol}${count}${fileType}
+			spawn sudo tcpdump -c $packetCount -w $file port 5353
+			expect "password"
+			send "${passwd}\r"
+			expect eof
+		}
+	}
+	"ssdp" {
+		while {$count < $fileCount} {
+			incr count
+			set file ${filePath}${protocol}${count}${fileType}
+			spawn sudo tcpdump -c $packetCount -w $file host 239.255.255.250
+			expect "password"
+			send "${passwd}\r"
+			expect eof
+		}
+	}
+	default{
+		puts "$protocol is incorrect."
+		exit
+	}
+}

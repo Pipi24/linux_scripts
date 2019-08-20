@@ -1,0 +1,22 @@
+#!/usr/bin/expect
+set i [lindex $argv 0]
+puts $i
+switch $i {
+	"arp" {
+		set count 0
+		while {$count < 10}	{
+			puts "i is 0"
+			incr count
+		}
+			
+	}
+	1 {
+		puts "i is 1"
+	}
+	2 {
+		puts "i is 2"
+	}
+	default {
+		puts "i is other"
+	}
+}

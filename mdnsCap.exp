@@ -1,0 +1,29 @@
+#!/usr/bin/expect
+set timeout -1
+set passwd "bryant.24"
+set filePath  "/home/wuhiu/Data/mdns/"
+set fileType ".pcap"
+set count 0
+
+if {$argc < 3} {
+	puts "Input 3 parameters."
+	exit
+}
+set protocol [lindex $argv 0]
+set fileCount [lindex $argv 1]
+set packetCount [lindex $argv 2]
+
+if {"$protocol" != "mdns"} {
+	puts "Input protocol is not mdns."
+	exit
+}
+puts $protocol
+
+while {$count < $fileCount} {
+	incr count
+	set file ${filePath}${protocol}${count}${fileType}
+	spawn sudo tcpdump -i enp3s0 -c $packetCount -w $file port 5353
+	expect "password"
+	send "${passwd}\r"
+	expect eof
+}
